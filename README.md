@@ -1,85 +1,85 @@
-# Web Scraping With Selenium Wire in Python
+# Python에서 Selenium Wire로 Webスクレイピング하기
 
-[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.com/) 
+[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.co.kr/) 
 
-This guide explains how to use Selenium Wire for web scraping and covers topics like request interception and dynamic proxy rotation.
+이 가이드는 Webスクレイピング을 위해 Selenium Wire를 사용하는 방법을 설명하며, リクエスト 가로채기와 동적 プロキシ ローテーション 같은 주제를 다룹니다.
 
-- [What Is Selenium Wire?](#what-is-selenium-wire)
-- [Why Use Selenium Wire?](#why-use-selenium-wire)
-- [Key Features of Selenium Wire](#key-features-of-selenium-wire)
-    - [Access Requests and Responses](#access-requests-and-responses)
-    - [Intercept Requests and Responses](#intercept-requests-and-responses)
-    - [WebSocket Monitoring](#websocket-monitoring)
-    - [Manage Proxies](#manage-proxies)
-- [Proxy Rotation in Selenium Wire](#proxy-rotation-in-selenium-wire)
-    - [Requirements](#requirements)
-    - [Step 1: Randomize Proxies](#step-1-randomize-proxies)
-    - [Step 2: Set the Proxy](#step-2-set-the-proxy)
-    - [Step 3: Visit the Target Page](#step-3-visit-the-target-page)
-    - [Step 4: Put It All Together](#step-4-put-it-all-together)
-- [Rotating proxies with Bright Data Proxies](#a-better-approach-to-proxy-rotation-bright-data-proxies)
-- [Selenium vs Selenium Wire for Web Scraping](#selenium-vs-selenium-wire-for-web-scraping)
-- [Conclusion](#conclusion)
+- [Selenium Wire란?](#what-is-selenium-wire)
+- [왜 Selenium Wire를 사용해야 하나요?](#why-use-selenium-wire)
+- [Selenium Wire의 주요 기능](#key-features-of-selenium-wire)
+    - [リクエスト 및 レスポンス 접근](#access-requests-and-responses)
+    - [リクエスト 및 レスポンス 가로채기](#intercept-requests-and-responses)
+    - [WebSocket 모니터링](#websocket-monitoring)
+    - [プロキシ 관리](#manage-proxies)
+- [Selenium Wire에서의 プロキシ ローテーション](#proxy-rotation-in-selenium-wire)
+    - [요구 사항](#requirements)
+    - [1단계: プロキシ 무작위화](#step-1-randomize-proxies)
+    - [2단계: プロキ시 설정](#step-2-set-the-proxy)
+    - [3단계: 대상 페이지 방문](#step-3-visit-the-target-page)
+    - [4단계: 전체 코드로 결합](#step-4-put-it-all-together)
+- [Bright Data Proxies로 ローテーティングプロキ시 사용하기](#a-better-approach-to-proxy-rotation-bright-data-proxies)
+- [Webスクレイピング을 위한 Selenium vs Selenium Wire](#selenium-vs-selenium-wire-for-web-scraping)
+- [결론](#conclusion)
 
 ## What Is Selenium Wire?
 
-[Selenium Wire](https://github.com/wkeeling/selenium-wire) is an extension for Selenium’s Python bindings that provides control over browser requests. It allows intercepting and modifying both requests and responses in real time directly from your Python code while using Selenium.
+[Selenium Wire](https://github.com/wkeeling/selenium-wire)는 Selenium의 Python 바인딩을 위한 확장으로, 브라우저 リクエスト에 대한 제어 기능을 제공합니다. Selenium을 사용하는 동안 Python 코드에서 직접 실시간으로 リクエスト와 レスポンス 모두를 가로채고 수정할 수 있습니다.
 
 > **Note**:\
-> The library is no longer maintained, however, several scraping technologies and scripts still use it.
+> 이 라이브러리는 더 이상 유지보수되지 않지만, 여러 スクレイピング 기술과 스크립트에서 여전히 사용하고 있습니다.
 
 ## Why Use Selenium Wire?
 
-Browsers have certain limitations that can make web scraping challenging. For example, they do not enable you to set authorized proxy URLs or [rotate proxies](/solutions/rotating-proxies) on the fly. Selenium Wire helps you overcome those limitations by interacting with sites as regular human users would.
+브라우저에는 Webスクレイピング을 어렵게 만들 수 있는 몇 가지 한계가 있습니다. 예를 들어, 인증이 포함된 プロキ시 URL을 설정하거나 [プロキ시를 ローテーション](/solutions/rotating-proxies)하는 것을 즉시(on the fly) 수행할 수 없습니다. Selenium Wire는 일반적인 인간 사용자처럼 사이트와 상호작용하면서 이러한 한계를 극복하도록 도와줍니다.
 
-Here are some of the reasones why you should use Selenium Wire for web scraping:
+Webスクレイピング을 위해 Selenium Wire를 사용해야 하는 이유는 다음과 같습니다:
 
-- **Gain Direct Access to Network Traffic**: Analyze, monitor, and modify AJAX requests and responses to extract valuable data efficiently.
-- **Evade Anti-Bot Detection**: [`ChromeDriver`](https://developer.chrome.com/docs/chromedriver/downloads?hl=en) reveals identifiable details that anti-bot systems use for detection. Technologies like `undetected-chromedriver` leverage Selenium Wire to mask these details and bypass detection mechanisms.
-- **Enhance Browser Flexibility**: Traditional browsers rely on fixed startup configurations that require a restart to modify. Selenium Wire enables real-time updates to request headers and proxy settings within an active session, making it an optimal solution for dynamic web scraping.
+- **네트워크 트래픽에 직접 접근**: AJAX リクエスト 및 レスポンス를 분석, 모니터링, 수정하여 유용한 데이터를 효율적으로 추출합니다.
+- **アンチボット 탐지 회피**: [`ChromeDriver`](https://developer.chrome.com/docs/chromedriver/downloads?hl=en)는 アンチボット 시스템이 탐지에 사용하는 식별 가능한 세부 정보를 노출합니다. `undetected-chromedriver` 같은 기술은 Selenium Wire를 활용하여 이러한 정보를 마스킹하고 탐지 메커니즘을 우회합니다.
+- **브라우저 유연성 향상**: 기존 브라우저는 고정된 시작 구성에 의존하므로 변경하려면 재시작이 필요합니다. Selenium Wire는 활성 セッション 내에서 リクエスト ヘッダー 및 プロキ시 설정을 실시간으로 업데이트할 수 있어, 동적 Webスクレイピング에 최적의 솔루션입니다.
 
 ## Key Features of Selenium Wire
 
 ### Access Requests and Responses
 
-Selenium Wire allows you to monitor and capture HTTP/HTTPS traffic from the browser, providing access to the following key attributes:
+Selenium Wire는 브라우저의 HTTP/HTTPS 트래픽을 모니터링하고 캡처할 수 있게 하며, 다음과 같은 주요 속성에 접근할 수 있습니다:
 
 | **Attribute** | **Description** |
 | --- | --- |
-| `driver.requests` | It reports the list of captured requests in chronological order |
-| `driver.last_request` | It reports the most recently captured request  <br>(This is more efficient than using `driver.requests[-1]`) |
-| `driver.wait_for_request(pat, timeout=10)` | This method will wait—the time is defined by the `timeout` parameter—until it sees a request matching a pattern, defined by the `pat` parameter—which can be a substring or a [regular expression](/blog/web-data/web-scraping-with-regex). |
-| `driver.har` | A JSON formatted [HAR](https://docs.brightdata.com/api-reference/proxy-manager/get_har_logs) archive of HTTP transactions that have taken place. |
-| `driver.iter_requests()` | It returns an iterator over captured requests. |
+| `driver.requests` | 캡처된 リクエスト 목록을 시간 순서대로 보고합니다 |
+| `driver.last_request` | 가장 최근에 캡처된 リクエスト를 보고합니다  <br>(이는 `driver.requests[-1]`를 사용하는 것보다 더 효율적입니다) |
+| `driver.wait_for_request(pat, timeout=10)` | 이 메서드는 `timeout` パラメータ로 정의된 시간 동안, `pat` パラメータ로 정의된 패턴(부분 문자열 또는 [정규식](/blog/web-data/web-scraping-with-regex) 가능)과 일치하는 リクエスト를 볼 때까지 대기합니다. |
+| `driver.har` | 발생한 HTTP 트랜잭션의 JSON 형식 [HAR](https://docs.brightdata.com/api-reference/proxy-manager/get_har_logs) 아카이브입니다. |
+| `driver.iter_requests()` | 캡처된 リクエスト에 대한 iterator를 반환합니다. |
 
-A Selenium Wire `Request` object has the following attributes:
-
-| **Attribute** | **Description** |
-| --- | --- |
-| `body` | The body’s request is presented as `bytes`. If the request has no body the value of `body` will be empty (for example: `b''`). |
-| `cert` | It reports information about the server SSL certificate in a dictionary format (it’s empty for non-HTTPS requests). |
-| `date` | It shows the datetime at which the request was made. |
-| `headers` | It reports a dictionary-like object of the request’s headers (note that in Selenium Wire headers are case-insensitive and duplicates are permitted). |
-| `host` | It reports the request host ( for example, `https://brightdata.com/`). |
-| `method` | It specifies the HHTP method (`GET`, `POST`, etc…) |
-| `params` | It reports a dictionary of the request’s parameters (note that if a parameter with the same name appears more than once in the request, its value in the dictionary will be a list). |
-| `path` | It reports the request path. |
-| `querystring` | It reports the query string. |
-| `response` | It reports the response object associated with the request (note that the value will be `None` if the request has no response). |
-| `url` | It reports the request URL complete with `host`, `path`, and `querystring`. |
-| `ws_messages` | In the case a request is a WebSocket (in which case, the URL is generally like `wss://`) the `ws_messages` will contain any websocket messages sent and received. |
-
-Instead, a `Response` object exposes these attributes:
+Selenium Wire의 `Request` 객체는 다음 속성을 가집니다:
 
 | **Attribute** | **Description** |
 | --- | --- |
-| `body` | The body’s response is presented as `bytes`. If the response has no body the value of `body` will be empty (for example: `b''`). |
-| `date` | It shows the datetime at which the response was received. |
-| `headers` | It reports a dictionary-like object of the response’s headers (note that in Selenium Wire headers are case-insensitive and duplicates are permitted). |
-| `reason` | It reports the reason phrase of the response, like `OK`, `Not Found`, etc… |
-| `status_code` | It reports the status of the response, like `200`, `404`, etc… |
+| `body` | 본문(body) リクエスト는 `bytes`로 제공됩니다. リクエスト에 body가 없으면 `body` 값은 비어 있게 됩니다(예: `b''`). |
+| `cert` | 서버 SSL 인증서 정보를 dictionary 형식으로 보고합니다(HTTPS가 아닌 リクエスト에서는 비어 있습니다). |
+| `date` | リクエスト가 수행된 datetime을 표시합니다. |
+| `headers` | リクエスト의 ヘッダー에 대한 dictionary-like 객체를 보고합니다(Selenium Wire에서 ヘッダー는 대소문자를 구분하지 않으며 중복이 허용됩니다). |
+| `host` | リクエスト host를 보고합니다(예: `https://brightdata.co.kr/`). |
+| `method` | HHTP 메서드(`GET`, `POST` 등…)를 지정합니다 |
+| `params` | リクエスト パラメータ의 dictionary를 보고합니다(같은 이름의 パラメータ가 リクエスト에 두 번 이상 나타나면 dictionary의 값은 list가 됩니다). |
+| `path` | リクエスト path를 보고합니다. |
+| `querystring` | query string을 보고합니다. |
+| `response` | リクエ스트와 연관된 レスポンス 객체를 보고합니다(レスポンス가 없는 リクエ스트의 경우 값은 `None`이 됩니다). |
+| `url` | `host`, `path`, `querystring`을 포함한 완전한 リクエ스트 URL을 보고합니다. |
+| `ws_messages` | リクエスト가 WebSocket인 경우(일반적으로 URL이 `wss://` 형태), `ws_messages`에 송수신된 websocket 메시지가 포함됩니다. |
 
-Let's write a Python script to test this feature:
+반면 `Response` 객체는 다음 속성을 노출합니다:
+
+| **Attribute** | **Description** |
+| --- | --- |
+| `body` | 본문(body) レスポンス는 `bytes`로 제공됩니다. レスポンス에 body가 없으면 `body` 값은 비어 있게 됩니다(예: `b''`). |
+| `date` | レスポンス가 수신된 datetime을 표시합니다. |
+| `headers` | レスポンス ヘッダー에 대한 dictionary-like 객체를 보고합니다(Selenium Wire에서 ヘッダー는 대소문자를 구분하지 않으며 중복이 허용됩니다). |
+| `reason` | `OK`, `Not Found` 등과 같은 レスポンス reason phrase를 보고합니다. |
+| `status_code` | `200`, `404` 등과 같은 レスポンス 상태를 보고합니다. |
+
+이 기능을 테스트하기 위한 Python 스크립트를 작성해 보겠습니다:
 
 ```python
 from seleniumwire import webdriver
@@ -89,7 +89,7 @@ driver = webdriver.Chrome()
 
 try:
     # Open the target website
-    driver.get("https://brightdata.com/")
+    driver.get("https://brightdata.co.kr/")
 
     # Access and print all captured requests
     for request in driver.requests:
@@ -104,23 +104,23 @@ finally:
     driver.quit()
 ```
 
-This code opens the target website and capture requests by using `driver.requests`. Then, it loops through a for loop to intercept some request attributes like `url`, `method`, and `headers`.
+이 코드는 대상 웹사이트를 열고 `driver.requests`를 사용하여 リクエスト를 캡처합니다. 그런 다음 for 루프를 통해 `url`, `method`, `headers` 같은 일부 リクエスト 속성을 가로채어 출력합니다.
 
-Here is the expected result:
+예상 결과는 다음과 같습니다:
 
 ![Some of the logged requests](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-98-1024x597.png)
 
 ### Intercept Requests and Responses
 
 
-Selenium Wire enables interception and modification of requests and responses using interceptors—functions that are triggered as network traffic flows through the browser.
+Selenium Wire는 네트워크 트래픽이 브라우저를 통과할 때 트리거되는 함수인 interceptor를 사용하여 リクエスト와 レスポンス를 가로채고 수정할 수 있게 해줍니다.
 
-There are two separate interceptors:
+interceptor는 두 가지로 분리되어 있습니다:
 
-* `driver.request_interceptor`: intercepts requests and accepts a single argument.
-* `driver.response_interceptor`: intercepts the response and accepts two arguments, one for the originating request and one for the response.
+* `driver.request_interceptor`: リクエスト를 가로채며 단일 인자를 받습니다.
+* `driver.response_interceptor`: レスポンス를 가로채며, 원본 リクエスト용 인자 1개와 レスポンス용 인자 1개, 총 2개의 인자를 받습니다.
 
-Here is an example that shows how to use a request interceptor:
+다음은 request interceptor를 사용하는 방법을 보여주는 예시입니다:
 
 ```python
 from seleniumwire import webdriver
@@ -143,7 +143,7 @@ driver.request_interceptor = interceptor
 
 try:
     # Open a website that makes multiple requests
-    driver.get("https://brightdata.com/")
+    driver.get("https://brightdata.co.kr/")
 
     # Print all captured requests
     for request in driver.requests:
@@ -156,38 +156,38 @@ finally:
     driver.quit()
 ```
 
-This is what this snippet does:
+이 스니펫이 수행하는 작업은 다음과 같습니다:
 
-* **Interceptor function**: Creates an interceptor function to be called for every outgoing request. This adds a custom header to all outgoing requests with `request.headers[]`. Also, it blocks browser requests for `example.com` domain.
-* **Captures requests**: After the page is loaded, all captured requests are printed, including the modified headers.
+* **Interceptor 함수**: 모든 발신 リクエスト마다 호출될 interceptor 함수를 생성합니다. `request.headers[]`로 모든 발신 リクエスト에 커스텀 ヘッダー를 추가합니다. 또한 `example.com` 도메인에 대한 브라우저 リクエ스트를 차단합니다.
+* **リクエスト 캡처**: 페이지가 로드된 뒤, 수정된 ヘッダー를 포함하여 캡처된 모든 リクエスト를 출력합니다.
 
 > **Note:**\
->  Blocking requests is beneficial when pages load extra resources like ads, analytics scripts, or third-party widgets that are not essential to your task. This approach enhances scraping efficiency by increasing speed and minimizing bandwidth consumption.
+>  리クエ스트 차단은 페이지가 광고, 분석 스크립트, 또는 타사 위젯처럼 작업에 필수적이지 않은 추가 리소스를 로드하는 경우 유용합니다. 이 접근 방식은 속도를 높이고 帯域幅 소비를 최소화하여 スクレイピング 효율을 향상합니다.
 
-The expected result should be something like this:
+예상 결과는 다음과 유사해야 합니다:
 
 ![Note the X-Test-Header](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-99-1024x538.png)
 
 ### WebSocket Monitoring
 
-Many modern websites rely on [`WebSockets`](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) to maintain real-time communication with servers. Unlike traditional HTTP requests, `WebSockets` create a continuous connection between the browser and the server, enabling seamless data exchange without repeated handshakes.  
+현대 웹사이트의 상당수는 서버와의 실시간 통신을 유지하기 위해 [`WebSockets`](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)에 의존합니다. 기존 HTTP リクエスト와 달리 `WebSockets`는 브라우저와 서버 사이에 연속 연결을 생성하여, 반복적인 핸드셰이크 없이 매끄러운 데이터 교환을 가능하게 합니다.  
 
-Since crucial data often flows through these channels, intercepting `WebSocket` traffic allows direct access to real-time server responses, eliminating the need for browser-based processing or rendering.
+중요한 데이터가 이러한 채널을 통해 흐르는 경우가 많으므로, `WebSocket` 트래픽을 가로채면 브라우저 기반 처리나 렌더링 없이도 실시간 서버 レスポンス에 직접 접근할 수 있습니다.
 
-Here are the attributes of a Selenium Wire `WebSocket` object:
+다음은 Selenium Wire `WebSocket` 객체의 속성입니다:
 
 | **Attribute** | **Description** |
 | --- | --- |
-| `content` | It reports the message’s content which can be either a `str` or in the `bytes` format. |
-| `date` | It shows the datetime of the message. |
-| `headers` | It reports a dictionary-like object of the response’s headers (note that in Selenium Wire headers are case-insensitive and duplicates are permitted). |
-| `from_client` | This is a boolean that returns `True` when the message was sent by the client and `False` by the server. |
+| `content` | 메시지 content를 보고하며, `str` 또는 `bytes` 형식일 수 있습니다. |
+| `date` | 메시지의 datetime을 표시합니다. |
+| `headers` | レスポンス ヘッダー에 대한 dictionary-like 객체를 보고합니다(Selenium Wire에서 ヘッダー는 대소문자를 구분하지 않으며 중복이 허용됩니다). |
+| `from_client` | 메시지가 클라이언트에 의해 전송되었으면 `True`, 서버에 의해 전송되었으면 `False`를 반환하는 boolean입니다. |
 
 ### Manage Proxies
 
-Proxy servers function as intermediaries between your device and target websites, concealing your IP address. They facilitate bypassing IP-based restrictions, mitigate blocking due to rate limits, and enable access to geo-restricted content for seamless web scraping.
+プロキシ 서버는 사용자 디바이스와 대상 웹사이트 사이의 중개자 역할을 하며 IPアドレス를 숨깁니다. 이를 통해 IP 기반 제한을 우회하고, レート制限으로 인한 차단을 완화하며, 지리적으로 제한된 콘텐츠에 접근하여 원활한 Webスクレイピング을 가능하게 합니다.
 
-Let's configure a proxy in Selenium Wire:
+Selenium Wire에서 プロキシ를 구성해 보겠습니다:
 
 ```python
 # Set up Selenium Wire options
@@ -202,9 +202,9 @@ options = {
 driver = webdriver.Chrome(seleniumwire_options=options)
 ```
 
-This setup differs from configuring a proxy in vanilla Selenium, where you need to rely on Chrome’s `--proxy-server` flag. This means that proxy configuration is static in vanilla Selenium. After a proxy has been set, it remains in effect for the entire browser session and cannot be modified without restarting the browser. This restriction can be limiting, particularly when dynamic proxy rotation is required.
+이 설정은 기본 Selenium(vanilla Selenium)에서 プロキ시를 구성하는 방식과 다릅니다. 기본 Selenium에서는 Chrome의 `--proxy-server` 플래그에 의존해야 합니다. 이는 기본 Selenium에서 プロキ시 구성이 정적이라는 의미입니다. 한 번 プロ키시를 설정하면 전체 브라우저 セッション 동안 계속 적용되며, 브라우저를 재시작하지 않고는 변경할 수 없습니다. 이러한 제한은 특히 동적 プロ키시 ローテーション이 필요한 경우 제약이 될 수 있습니다.
 
-In contrast, Selenium Wire provides the flexibility to change proxies dynamically within the same browser instance. That is possible thanks to the `proxy` attribute:
+반면 Selenium Wire는 동일한 브라우저 인스턴스 내에서 プロ키시를 동적으로 변경할 수 있는 유연성을 제공합니다. 이는 `proxy` 속성 덕분에 가능합니다:
 
 ```python
 # Dynamically change the proxy
@@ -214,44 +214,44 @@ driver.proxy = {
 }
 ```
 
-Plus, Chrome’s `--proxy-server` flag does not support proxies with authentication credentials in the URL:
+또한 Chrome의 `--proxy-server` 플래그는 URL에 認証 자격 증명이 포함된 プロ키시를 지원하지 않습니다:
 
 ```
 protocol://username:password@host:port
 ```
 
-Instead, Selenium Wire fully supports authenticated proxies, making it the better choice for web scraping.
+대신 Selenium Wire는 認証된 プロキ시를 완전히 지원하므로, Webスクレイピング에 더 나은 선택입니다.
 
 ## Proxy Rotation in Selenium Wire
 
-Let's set up a Selenium Wire project for proxy rotation. This will help you make your exit IP change at every request.
+이제 プロ키시 ローテーション을 위해 Selenium Wire 프로젝트를 설정해 보겠습니다. 이를 통해 각 リクエスト마다 exit IP가 변경되도록 할 수 있습니다.
 
 ### Requirements
 
-You need the following prerequisites to follow this part of the guide:
+이 가이드의 이 부분을 따라 하려면 다음 사전 요구 사항이 필요합니다:
 
-* Python 3.7 or higher
-* [Supported web browser](https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location/)
+* Python 3.7 이상
+* [지원되는 웹 브라우저](https://www.selenium.dev/documentation/webdriver/troubleshooting/errors/driver_location/)
 
-Start with creating a virtual environment directory:
+먼저 가상 환경 디렉터리를 생성합니다:
 
 ```bash
 python -m venv venv
 ```
 
-To activate it, on Windows, run:
+Windows에서 활성화하려면 다음을 실행합니다:
 
 ```bash
 venv\Scripts\activate
 ```
 
-On macOS/Linux, execute:
+macOS/Linux에서는 다음을 실행합니다:
 
 ```bash
 source venv/bin/activate
 ```
 
-Now  install Selenium Wire (Selenium will be automatically installed as its dependency):
+이제 Selenium Wire를 설치합니다(Selenium은 의존성으로 자동 설치됩니다):
 
 ```bash
 pip install selenium-wire
@@ -259,7 +259,7 @@ pip install selenium-wire
 
 ### Step 1: Randomize Proxies
 
-First, you need a list of valid proxy URLs. You can use our list of [free proxies](https://brightdata.com/solutions/free-proxies). Add them to a list and use [`random.choice()`](https://docs.python.org/3/library/random.html#random.choice) to pick a random element from it:
+먼저 유효한 プロ키시 URL 목록이 필요합니다. [무료 プロ키시 목록](https://brightdata.co.kr/solutions/free-proxies)을 사용할 수 있습니다. 이를 list에 추가하고 [`random.choice()`](https://docs.python.org/3/library/random.html#random.choice)를 사용하여 무작위 요소를 선택합니다:
 
 ```python
 def get_random_proxy():
@@ -274,9 +274,9 @@ def get_random_proxy():
     return random.choice(proxies)
 ```
 
-Once called, this function returns a random proxy URL from the list.
+이 함수를 호출하면 목록에서 무작위 プロ키시 URL을 반환합니다.
 
-To make it work, do not forget to import `random`:
+작동하도록 하려면 `random`을 import하는 것을 잊지 마십시오:
 
 ```
 import random
@@ -284,13 +284,13 @@ import random
 
 ### Step 2: Set the Proxy
 
-Call the `get_random_proxy()` function to get a proxy URL:
+`get_random_proxy()` 함수를 호출하여 プロ키시 URL을 가져옵니다:
 
 ```python
 proxy = get_random_proxy()
 ```
 
-Initialize the browser instance and set the selected proxy:
+브라우저 인스턴스를 초기화하고 선택한 プロ키시를 설정합니다:
 
 ```python
 # Selenium Wire configuration with the proxy
@@ -309,7 +309,7 @@ chrome_options.add_argument("--headless")  # Run the browser in headless mode
 driver = webdriver.Chrome(service=Service(), options=chrome_options, seleniumwire_options=seleniumwire_options)
 ```
 
-The above snippet requires the following imports:
+위 스니펫에는 다음 import가 필요합니다:
 
 ```python
 from seleniumwire import webdriver
@@ -317,7 +317,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 ```
 
-For dynamically changing the proxy during the browser session, use this code instead:
+브라우저 セッション 동안 プロキ시를 동적으로 변경하려면 대신 다음 코드를 사용합니다:
 
 ```python
 driver.proxy = {
@@ -328,7 +328,7 @@ driver.proxy = {
 
 ### Step 3: Visit the Target Page
 
-Visit the target website, extract the output, and close the browser:
+대상 웹사이트를 방문하고, 출력을 추출한 다음, 브라우저를 종료합니다:
 
 ```python
 try:
@@ -346,17 +346,17 @@ finally:
     driver.quit()
 ```
 
-To make it work, import `By` from Selenium:
+작동하도록 하려면 Selenium에서 `By`를 import합니다:
 
 ```python
 from selenium.webdriver.common.by import By
 ```
 
-In this example, the destination page is the [`/ip`](https://httpbin.io/ip) endpoint from the HTTPBin project: this page returns the IP address of the caller. If everything goes as expected, the script should print a different IP from the list of proxies on each run.
+이 예시에서 목적지 페이지는 HTTPBin 프로젝트의 [`/ip`](https://httpbin.io/ip) エンドポイント입니다. 이 페이지는 호출자의 IPアドレス를 반환합니다. 모든 것이 예상대로라면, 스크립트는 실행할 때마다 プロ키시 목록의 서로 다른 IP를 출력해야 합니다.
 
 ### Step 4: Put It All Together
 
-This is the entire Selenium Wire proxy rotation logic that should be in your `selenium_wire.py` file:
+다음은 `selenium_wire.py` 파일에 들어가야 하는 전체 Selenium Wire プロ키시 ローテーション 로직입니다:
 
 ```python
 import random
@@ -409,13 +409,13 @@ finally:
     driver.quit()
 ```
 
-To run the file, launch:
+파일을 실행하려면 다음을 실행합니다:
 
 ```bash
 python3 selenium_wire.py
 ```
 
-At each run, the output should be:
+각 실행마다 출력은 다음과 같아야 합니다:
 
 ```json
 {
@@ -423,7 +423,7 @@ At each run, the output should be:
 }
 ```
 
-Or:
+또는:
 
 ```json
 {
@@ -431,57 +431,57 @@ Or:
 }
 ```
 
-And so on…
+등등…
 
-Run the script multiple times, and you will see a different IP address each time.
+스크립트를 여러 번 실행하면 매번 다른 IPアドレス가 표시되는 것을 확인할 수 있습니다.
 
 ## A Better Approach to Proxy Rotation: Bright Data Proxies
 
-Manual proxy rotation in Selenium Wire involves a lot of boilerplate code and requires maintaining a list of valid proxy URLs. Instead, you can use Bright Data’s rotating proxies that automatically handle IP address changes. Here is how you can use them.
+Selenium Wire에서 수동 プロ키시 ローテーション을 구현하려면 많은 boilerplate 코드가 필요하고, 유효한 プロ키시 URL 목록을 유지해야 합니다. 대신 IPアドレス 변경을 자동으로 처리하는 Bright Data의 ローテーティングプロキシ를 사용할 수 있습니다. 사용 방법은 다음과 같습니다.
 
-If you already have an account, log in to Bright Data. Otherwise, create an account for free. You will gain access to the following user dashboard:
+이미 계정이 있다면 Bright Data에 로그인합니다. 그렇지 않다면 무료로 계정을 생성하십시오. 그러면 다음 사용자 대시보드에 접근할 수 있습니다:
 
 ![The Bright Data dashboard](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-100-1024x498.png)
 
-Click the “View proxy products” button:
+“View proxy products” 버튼을 클릭합니다:
 
 ![View proxy products](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-101.png)
 
-You will be redirected to the “Proxies & Scraping Infrastructure” page below:
+아래의 “Proxies & Scraping Infrastructure” 페이지로 리디렉션됩니다:
 
 ![Configuring your residential proxies](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-102-1024x483.png)
 
-Scroll down, find the “[Residential Proxies](/blog/proxy-101/ultimate-guide-to-proxy-types)” card, and click on the “Get started” button:
+아래로 스크롤하여 “[Residential Proxies](/blog/proxy-101/ultimate-guide-to-proxy-types)” 카드로 이동한 다음 “Get started” 버튼을 클릭합니다:
 
 ![Residential proxies](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-103.png)
 
-You will reach the residential proxy configuration dashboard. Follow the guided wizard and set up the proxy service based on your needs.
+레ジデンシャルプロキ시 구성 대시보드로 이동합니다. 안내되는 wizard를 따라 필요에 맞게 プロ키시 서비스를 설정하십시오.
 
 ![Configuring your residential proxies](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-104.png)
 
-Go to the “Access parameters” tab and retrieve your proxy’s host, port, username, and password as follows:
+“Access parameters” 탭으로 이동하여 다음과 같이 プロ키시의 host, port, username, password를 가져옵니다:
 
 ![access parameter](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-105.png)
 
-Note that the “Host” field already includes the port.
+“Host” 필드에는 이미 port가 포함되어 있다는 점에 유의하십시오.
 
-That is all you need to build the proxy URL and set it in Selenium Wire. Collect all the information and build a URL with the following syntax:
+이것이 プロ키시 URL을 구성하고 Selenium Wire에 설정하는 데 필요한 전부입니다. 모든 정보를 모아 다음 구문으로 URL을 구성합니다:
 
 ```
 <username>:<password>@<host>
 ```
 
-For example, in this case it would be:
+예를 들어 이 경우 다음과 같습니다:
 
 ```
 brd-customer-hl_4hgu8dwd-zone-residential:[email protected]:XXXXX
 ```
 
-Toggle “Active proxy,” follow the last instructions, and you are good to go!
+“Active proxy”를 토글하고 마지막 안내를 따르면 완료됩니다!
 
 ![Active proxy toggle](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-106-1024x164.png)
 
-Here is the Selenium Wire proxy snippet for Bright Data integration:
+다음은 Bright Data 통합을 위한 Selenium Wire プロ키시 스니펫입니다:
 
 ```python
 # Bright Data proxy URL
@@ -501,18 +501,18 @@ driver = webdriver.Chrome(seleniumwire_options=options)
 
 ## Selenium vs Selenium Wire for Web Scraping
 
-To summarize, here is the Selenium vs Selenium Wire comparison:
+요약하면, 다음은 Selenium과 Selenium Wire의 비교입니다:
 
 |     | **Selenium** | **Selenium Wire** |
 | --- | --- | --- |
-| **Purpose** | Automates web browsers to perform UI testing and web interactions | Extends Selenium to provide additional capabilities for inspecting and modifying HTTP/HTTPS requests and responses |
-| **HTTP/HTTPS request handling** | Does not provide direct access to HTTP/HTTPS requests or responses | Allows inspection, modification, and capturing of HTTP/HTTPS requests and responses |
-| **Proxy support** | Has limited proxy support (requires manual configuration) | Advanced proxy management, with support for dynamic setting |
-| **Performance** | Lightweight and fast | Slightly slower due to the capturing and processing of the network traffic |
-| **Use cases** | Primarily used for functional testing of web applications, handy for basic web scraping cases | Useful for testing APIs, debugging network traffic, and web scraping |
+| **Purpose** | UI 테스트 및 웹 상호작용을 수행하기 위해 웹 브라우저를 자동화합니다 | HTTP/HTTPS リクエスト 및 レスポンス를 검사하고 수정하기 위한 추가 기능을 제공하도록 Selenium을 확장합니다 |
+| **HTTP/HTTPS request handling** | HTTP/HTTPS リクエ스트 또는 レスポンス에 대한 직접 접근을 제공하지 않습니다 | HTTP/HTTPS リクエ스트 및 レスポンス의 검사, 수정, 캡처를 허용합니다 |
+| **Proxy support** | 제한적인 プロ키시 지원(수동 구성이 필요함) | 동적 설정을 지원하는 고급 プロ키시 관리 |
+| **Performance** | 가볍고 빠릅니다 | 네트워크 트래픽의 캡처 및 처리 때문에 약간 더 느립니다 |
+| **Use cases** | 주로 웹 애플리케이션의 기능 테스트에 사용되며, 기본적인 Webスクレイピング 케이스에 유용합니다 | API 테스트, 네트워크 트래픽 디버깅, Webスクレイピング에 유용합니다 |
 
 ## Conclusion
 
-While Selenium Wire can be used for web scraping efficiently, it isn't maintained software and is not a one-size-fits-all solution.
+Selenium Wire는 Webスクレイピング에 효율적으로 사용할 수 있지만, 유지보수되지 않는 소프트웨어이며 모든 경우에 통용되는(one-size-fits-all) 솔루션은 아닙니다.
 
-Instead, consider using vanilla Selenium with a dedicated scraping browser like the [Scraping Browser from Bright Data](https://brightdata.com/products/scraping-browser). It's a scalable cloud browser that works with [Playwright](https://brightdata.com/products/scraping-browser/playwright), [Puppeteer](https://brightdata.com/products/scraping-browser/puppeteer), [Selenium](https://brightdata.com/products/scraping-browser/selenium), and others. It seamlessly rotates exit IPs for each request while managing browser fingerprinting, retries, CAPTCHA solving, and more. Try it to eliminate blocking issues and optimize your scraping workflow.
+대신 [Bright Data의 Scraping Browser](https://brightdata.co.kr/products/scraping-browser) 같은 전용 스クレ이ピング 브라우저와 함께 기본 Selenium을 사용하는 것을 고려하십시오. 이는 [Playwright](https://brightdata.co.kr/products/scraping-browser/playwright), [Puppeteer](https://brightdata.co.kr/products/scraping-browser/puppeteer), [Selenium](https://brightdata.co.kr/products/scraping-browser/selenium) 등과 함께 동작하는 확장 가능한 클라우드 브라우저입니다. 또한 브라우ザフィンガープリント 관리, リトライ, CAPTCHA 해결 등을 수행하는 동시에 각 リクエスト마다 exit IP를 원활하게 ローテーション합니다. 이를 사용해 차단 문제를 제거하고 スクレイピング 워크플로를 최적화해 보십시오.
