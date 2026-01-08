@@ -1,6 +1,6 @@
 # Python에서 Selenium Wire로 Webスクレイピング하기
 
-[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.co.kr/) 
+[![Promo](https://github.com/bright-kr/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.co.kr/) 
 
 이 가이드는 Webスクレイピング을 위해 Selenium Wire를 사용하는 방법을 설명하며, リクエスト 가로채기와 동적 プロキシ ローテーション 같은 주제를 다룹니다.
 
@@ -108,7 +108,7 @@ finally:
 
 예상 결과는 다음과 같습니다:
 
-![Some of the logged requests](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-98-1024x597.png)
+![Some of the logged requests](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-98-1024x597.png)
 
 ### Intercept Requests and Responses
 
@@ -166,7 +166,7 @@ finally:
 
 예상 결과는 다음과 유사해야 합니다:
 
-![Note the X-Test-Header](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-99-1024x538.png)
+![Note the X-Test-Header](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-99-1024x538.png)
 
 ### WebSocket Monitoring
 
@@ -441,27 +441,27 @@ Selenium Wire에서 수동 プロ키시 ローテーション을 구현하려면
 
 이미 계정이 있다면 Bright Data에 로그인합니다. 그렇지 않다면 무료로 계정을 생성하십시오. 그러면 다음 사용자 대시보드에 접근할 수 있습니다:
 
-![The Bright Data dashboard](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-100-1024x498.png)
+![The Bright Data dashboard](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-100-1024x498.png)
 
 “View proxy products” 버튼을 클릭합니다:
 
-![View proxy products](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-101.png)
+![View proxy products](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-101.png)
 
 아래의 “Proxies & Scraping Infrastructure” 페이지로 리디렉션됩니다:
 
-![Configuring your residential proxies](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-102-1024x483.png)
+![Configuring your residential proxies](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-102-1024x483.png)
 
 아래로 스크롤하여 “[Residential Proxies](/blog/proxy-101/ultimate-guide-to-proxy-types)” 카드로 이동한 다음 “Get started” 버튼을 클릭합니다:
 
-![Residential proxies](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-103.png)
+![Residential proxies](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-103.png)
 
 레ジデンシャルプロキ시 구성 대시보드로 이동합니다. 안내되는 wizard를 따라 필요에 맞게 プロ키시 서비스를 설정하십시오.
 
-![Configuring your residential proxies](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-104.png)
+![Configuring your residential proxies](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-104.png)
 
 “Access parameters” 탭으로 이동하여 다음과 같이 プロ키시의 host, port, username, password를 가져옵니다:
 
-![access parameter](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-105.png)
+![access parameter](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-105.png)
 
 “Host” 필드에는 이미 port가 포함되어 있다는 점에 유의하십시오.
 
@@ -479,7 +479,7 @@ brd-customer-hl_4hgu8dwd-zone-residential:[email protected]:XXXXX
 
 “Active proxy”를 토글하고 마지막 안내를 따르면 완료됩니다!
 
-![Active proxy toggle](https://github.com/luminati-io/selenium-wire-web-scraping/blob/main/Images/image-106-1024x164.png)
+![Active proxy toggle](https://github.com/bright-kr/selenium-wire-web-scraping/blob/main/Images/image-106-1024x164.png)
 
 다음은 Bright Data 통합을 위한 Selenium Wire プロ키시 스니펫입니다:
 
